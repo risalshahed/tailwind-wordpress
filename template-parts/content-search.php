@@ -1,35 +1,50 @@
 <?php
 /**
- * Template part for displaying results in search pages
+ * Template part for displaying a message that posts cannot be found
  *
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
- * @package _s
+ * @package Tailwind_Theme
  */
 
 ?>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+<section class="no-results not-found">
+	<header class="page-header">
+		<h1 class="page-title"><?php esc_html_e( 'Nothing Found', 'tailwindtheme' ); ?></h1>
+	</header><!-- .page-header -->
 
-		<?php if ( 'post' === get_post_type() ) : ?>
-		<div class="entry-meta">
+	<div class="page-content">
+		<?php
+		if ( is_home() && current_user_can( 'publish_posts' ) ) : ?>
+
+			<p><?php
+				printf(
+					wp_kses(
+						/* translators: 1: link to WP admin new post page. */
+						__( 'Ready to publish your first post? <a href="%1$s">Get started here</a>.', 'tailwindtheme' ),
+						array(
+							'a' => array(
+								'href' => array(),
+							),
+						)
+					),
+					esc_url( admin_url( 'post-new.php' ) )
+				);
+			?></p>
+
+		<?php elseif ( is_search() ) : ?>
+
+			<p><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'tailwindtheme' ); ?></p>
 			<?php
-			_s_posted_on();
-			_s_posted_by();
-			?>
-		</div><!-- .entry-meta -->
-		<?php endif; ?>
-	</header><!-- .entry-header -->
+				get_search_form();
 
-	<?php _s_post_thumbnail(); ?>
+		else : ?>
 
-	<div class="entry-summary">
-		<?php the_excerpt(); ?>
-	</div><!-- .entry-summary -->
+			<p><?php esc_html_e( 'It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help.', 'tailwindtheme' ); ?></p>
+			<?php
+				get_search_form();
 
-	<footer class="entry-footer">
-		<?php _s_entry_footer(); ?>
-	</footer><!-- .entry-footer -->
-</article><!-- #post-<?php the_ID(); ?> -->
+		endif; ?>
+	</div><!-- .page-content -->
+</section><!-- .no-results -->
